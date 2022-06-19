@@ -1,0 +1,20 @@
+{
+  "name": "calendar",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Calendar for BHS course.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Peter Seibel",
+  "license": "MIT",
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.4.1",
+    "esbuild": "^0.14.45",
+    "fs": "^0.0.1-security"
+  }
+}

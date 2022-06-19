@@ -1,0 +1,35 @@
+body {
+    font-family: "Gill Sans", sans-serif;
+    margin-top: 50px;
+    text-align: center;
+}
+
+#container {
+    display: inline-block;
+    background: rgba(196, 128, 196, 0.1);
+    padding: 50px;
+}
+
+#input {
+    width: 600px;
+    height: 400px;
+}
+
+#output {
+    margin-top: 10px;
+    width: 600px;
+    height: 200px;
+    border: thin solid grey;
+    background: #000;
+    color: #0f0;
+}
+
+div.codeLink {
+    text-align: right;
+    font-size: 12px;
+    margin-top: 1em;
+}
+
+div.codeLink * {
+    vertical-align: middle;
+}
