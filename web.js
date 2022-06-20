@@ -3,6 +3,11 @@ const repl = document.getElementById("repl");
 const cursor = document.getElementById("cursor");
 const prompt = document.getElementById("prompt");
 
+let iframe = null;
+
+/*
+ * Put the prompt and the cursor at the end of the repl, ready for more input.
+ */
 const newPrompt = () => {
   const div = document.createElement("div");
   div.append(prompt);
@@ -34,6 +39,20 @@ const showError = (message, source, line, column, error) => {
 };
 
 /*
+ * Create a new iframe and add all the non-REPL code to it.
+ */
+const reload = () => {
+  if (iframe !== null) {
+    iframe.parentNode.removeChild(iframe);
+  }
+  iframe = document.createElement("iframe");
+  iframe.setAttribute("src", "about:blank");
+  document.querySelector("body").append(iframe);
+  iframe.contentWindow.outputLine = outputLine;
+  iframe.contentWindow.onerror = showError;
+};
+
+/*
  * Send code to the iframe to be added as a script tag. The script tag can wrap
  * the code in calls to outputLine to send output back to our #repl div.
  */
@@ -46,6 +65,7 @@ const evaluate = (code) => {
 
 submit.onclick = (e) => {
   const text = input.value;
+  reload();
   evaluate(`${text};\noutputLine('ok.');`);
   return false;
 };
@@ -62,11 +82,12 @@ cursor.onkeypress = (e) => {
     parent.removeChild(cursor);
     evaluate(`outputLine(${text})`);
     return false;
+  } else {
+    return true;
   }
 };
 
-window.frames[0].window.outputLine = outputLine;
-window.frames[0].window.onerror = showError;
+reload();
 cursor.onerror = showError;
 repl.onfocus = (e) => cursor.focus();
 cursor.focus();

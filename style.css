@@ -14,6 +14,10 @@ body {
     height: 200px;
 }
 
+#submit {
+    width: 100%;
+}
+
 #repl {
     font-size: 16px;
     margin-top: 10px;
@@ -26,8 +30,6 @@ body {
     font-family: monospace;
     overflow-y: scroll;
 }
-
-#submit { width: 100%; }
 
 #repl div {
     padding-top: 6px;
@@ -51,4 +53,4 @@ div.codeLink * {
     vertical-align: middle;
 }
 
-#i { display: none; }
+iframe { display: none; }
