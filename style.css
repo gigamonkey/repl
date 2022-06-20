@@ -39,6 +39,12 @@ body {
     color: red;
 }
 
+#repl div.message {
+    font-family: serif;
+    font-style: italic;
+    color: #eee;
+}
+
 #cursor {
     outline: unset;
 }

@@ -3,7 +3,39 @@ const repl = document.getElementById("repl");
 const cursor = document.getElementById("cursor");
 const prompt = document.getElementById("prompt");
 
-let iframe = null;
+const wrapConsole = (old) => {
+  return {
+    log: (text) => {
+      old.log(text);
+      outputLine(text);
+    },
+    info: (text) => {
+      old.info(text);
+      outputLine(`INFO: ${text}`);
+    },
+    warn: (text) => {
+      old.warn(text);
+      outputLine(`WARN: ${text}`);
+    },
+    error: (text) => {
+      old.error(text);
+      outputLine(`ERROR: ${text}`);
+    },
+  };
+};
+
+const replConsole = {
+  log: (text) => outputLine(text),
+  info: (text) => outputLine(`INFO: ${text}`),
+  warn: (text) => outputLine(`WARN: ${text}`),
+  error: (text) => outputLine(`ERROR: ${text}`),
+  debug: (text) => outputLine(`DEBUG: ${text}`),
+};
+
+// Save this for our own logging to the actual browser tools console.
+const _console = window.console;
+
+//window.console = wrapConsole(window.console);
 
 /*
  * Put the prompt and the cursor at the end of the repl, ready for more input.
@@ -27,34 +59,44 @@ const outputLine = (text) => {
 };
 
 /*
+ * Emit a message to the repl other than printing a value.
+ */
+const message = (text) => {
+  const div = document.createElement("div");
+  div.classList.add("message");
+  div.innerText = "" + text;
+  repl.insertBefore(div, prompt.parentNode);
+};
+
+/*
  * Show errors from evaluating code.
  */
 const showError = (message, source, line, column, error) => {
   const div = document.createElement("div");
   div.classList.add("error");
-  div.innerText = "Error: " + error;
+  div.innerText = `${error} (line ${line}, column ${column})`;
   repl.append(div);
   newPrompt();
   return true;
 };
 
 /*
- * Create a new iframe and add all the non-REPL code to it.
+ * Create a new iframe to use for evaluating code.
  */
-const reload = () => {
-  if (iframe !== null) {
-    iframe.parentNode.removeChild(iframe);
-  }
-  iframe = document.createElement("iframe");
+const newIframe = () => {
+  const iframe = document.createElement("iframe");
   iframe.setAttribute("src", "about:blank");
   document.querySelector("body").append(iframe);
-  iframe.contentWindow.outputLine = outputLine;
+  iframe.contentWindow.repl = { outputLine, message };
   iframe.contentWindow.onerror = showError;
+  iframe.contentWindow.console = replConsole;
+  return iframe;
 };
 
 /*
- * Send code to the iframe to be added as a script tag. The script tag can wrap
- * the code in calls to outputLine to send output back to our #repl div.
+ * Send code to the current iframe to be added as a script tag and thus
+ * evaluated. The code can use the function in the iframe's repl object (see
+ * newIframe) to communicate back.
  */
 const evaluate = (code) => {
   const d = window.frames[0].document;
@@ -63,11 +105,16 @@ const evaluate = (code) => {
   d.documentElement.append(s);
 };
 
-submit.onclick = (e) => {
+/*
+ * Load the code from input into the iframe, creating a new iframe if needed.
+ */
+const loadCode = () => {
   const text = input.value;
-  reload();
-  evaluate(`${text};\noutputLine('ok.');`);
-  return false;
+  if (iframe !== null) {
+    iframe.parentNode.removeChild(iframe);
+  }
+  iframe = newIframe();
+  evaluate(`"use strict";\n${text};\nrepl.message('Code loaded.');\n`);
 };
 
 cursor.onkeypress = (e) => {
@@ -80,14 +127,44 @@ cursor.onkeypress = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(`outputLine(${text})`);
+    evaluate(`repl.outputLine(${text})`);
     return false;
   } else {
     return true;
   }
 };
 
-reload();
+let iframe = newIframe();
+submit.onclick = loadCode;
 cursor.onerror = showError;
 repl.onfocus = (e) => cursor.focus();
 cursor.focus();
+
+const logKey = (label, e) => {
+  console.log(`${label} - ${e.key}/${e.keyCode}`);
+  console.log(e);
+};
+
+window.onkeydown = (e) => {
+  // Steal this one.
+  if (e.key === "e" && e.metaKey) {
+    e.preventDefault();
+    loadCode();
+  }
+};
+
+/*
+window.onkeypress = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  logKey("press", e);
+  return true;
+}
+
+window.onkeyup = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  logKey("up", e);
+  return true;
+}
+*/
