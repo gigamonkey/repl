@@ -16,12 +16,23 @@ body {
 }
 
 #output {
+    font-size: 16px;
     margin-top: 10px;
     width: 600px;
     height: 200px;
-    border: thin solid grey;
-    background: #000;
+    background: #bbb;
     color: #0f0;
+    text-align: left;
+    padding: 0.5em;
+    font-family: monospace;
+}
+
+#output div {
+    padding-top: 6px;
+}
+
+#output div.error {
+    color: red;
 }
 
 div.codeLink {
@@ -33,3 +44,5 @@ div.codeLink {
 div.codeLink * {
     vertical-align: middle;
 }
+
+#i { display: none; }
