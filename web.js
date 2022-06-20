@@ -46,7 +46,7 @@ const evaluate = (code) => {
 
 submit.onclick = (e) => {
   const text = input.value;
-  evaluate(`${text}; outputLine('ok.');`);
+  evaluate(`${text};\noutputLine('ok.');`);
   return false;
 };
 
