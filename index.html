@@ -12,7 +12,14 @@
   <div id="container">
     <h1>Javascript REPL</h1>
     <textarea id="input"></textarea>
-    <div id="output"></div>
+    <div>
+      <button id="submit">Evaluate</button>
+    </div>
+    <div id="output" tabindex="0">
+      <div>
+        <span id="prompt">&gt;&nbsp;</span><span id="cursor" contenteditable="true"></span>
+      </div>
+    </div>
     <div class="codeLink">
       <a href="https://github.com/gigamonkey/course-calendar"><img src="GitHub-Mark-32px.png" width="12" height="12"
       alt="GitHub"></a> <a href="/">Not on GitHub yet.</a>

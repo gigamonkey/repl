@@ -1,31 +1,33 @@
 body {
     font-family: "Gill Sans", sans-serif;
-    margin-top: 50px;
     text-align: center;
 }
 
 #container {
     display: inline-block;
     background: rgba(196, 128, 196, 0.1);
-    padding: 50px;
+    padding: 20px 40px;
 }
 
 #input {
     width: 600px;
-    height: 400px;
+    height: 200px;
 }
 
 #output {
     font-size: 16px;
     margin-top: 10px;
     width: 600px;
-    height: 200px;
+    height: 600px;
     background: #bbb;
-    color: #0f0;
+    color: #090;
     text-align: left;
     padding: 0.5em;
     font-family: monospace;
+    overflow-y: scroll;
 }
+
+#submit { width: 100%; }
 
 #output div {
     padding-top: 6px;
@@ -33,6 +35,10 @@ body {
 
 #output div.error {
     color: red;
+}
+
+#cursor {
+    outline: unset;
 }
 
 div.codeLink {
