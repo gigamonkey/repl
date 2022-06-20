@@ -3,27 +3,6 @@ const repl = document.getElementById("repl");
 const cursor = document.getElementById("cursor");
 const prompt = document.getElementById("prompt");
 
-const wrapConsole = (old) => {
-  return {
-    log: (text) => {
-      old.log(text);
-      outputLine(text);
-    },
-    info: (text) => {
-      old.info(text);
-      outputLine(`INFO: ${text}`);
-    },
-    warn: (text) => {
-      old.warn(text);
-      outputLine(`WARN: ${text}`);
-    },
-    error: (text) => {
-      old.error(text);
-      outputLine(`ERROR: ${text}`);
-    },
-  };
-};
-
 const replConsole = {
   log: (text) => outputLine(text),
   info: (text) => outputLine(`INFO: ${text}`),
@@ -31,11 +10,6 @@ const replConsole = {
   error: (text) => outputLine(`ERROR: ${text}`),
   debug: (text) => outputLine(`DEBUG: ${text}`),
 };
-
-// Save this for our own logging to the actual browser tools console.
-const _console = window.console;
-
-//window.console = wrapConsole(window.console);
 
 /*
  * Put the prompt and the cursor at the end of the repl, ready for more input.
@@ -59,7 +33,8 @@ const outputLine = (text) => {
 };
 
 /*
- * Emit a message to the repl other than printing a value.
+ * Emit a message to the repl other than printing a value. These messages are
+ * formatted differently and inserted before the current prompt.
  */
 const message = (text) => {
   const div = document.createElement("div");
@@ -114,7 +89,12 @@ const loadCode = () => {
     iframe.parentNode.removeChild(iframe);
   }
   iframe = newIframe();
-  evaluate(`"use strict";\n${text};\nrepl.message('Code loaded.');\n`);
+  evaluate(`
+    "use strict";
+    repl.message('Loading ...');
+    ${text};
+    repl.message('... loaded.');
+  `);
 };
 
 cursor.onkeypress = (e) => {
