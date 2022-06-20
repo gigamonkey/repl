@@ -14,7 +14,7 @@ body {
     height: 200px;
 }
 
-#output {
+#repl {
     font-size: 16px;
     margin-top: 10px;
     width: 600px;
@@ -29,11 +29,11 @@ body {
 
 #submit { width: 100%; }
 
-#output div {
+#repl div {
     padding-top: 6px;
 }
 
-#output div.error {
+#repl div.error {
     color: red;
 }
 
