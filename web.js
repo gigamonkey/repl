@@ -47,6 +47,13 @@ const replError = (text) => {
  * Show errors from evaluating code.
  */
 const showError = (msg, source, line, column, error) => {
+  // This seems to be a Chrome bug. Doesn't always happen but probably safe to
+  // filter this message.
+  // https://stackoverflow.com/questions/72396527/evalerror-possible-side-effect-in-debug-evaluate-in-google-chrome
+  if (error === "EvalError: Possible side-effect in debug-evaluate") {
+    return;
+  }
+
   const errormsg = `${error} (line ${line - 3}, column ${column})`;
   if (iframe.contentWindow.repl.loading) {
     message(errormsg);
@@ -85,7 +92,7 @@ const evaluate = (code) => {
  * Load the code from input into the iframe, creating a new iframe if needed.
  */
 const loadCode = () => {
-  const text = input.value;
+  const text = input.innerText;
   if (iframe !== null) {
     iframe.parentNode.removeChild(iframe);
   }

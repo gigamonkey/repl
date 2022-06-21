@@ -14,24 +14,28 @@ body {
     padding: 20px 40px;
 }
 
+#input, #repl {
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: left;
+    padding: 0.5em;
+    overflow-y: scroll;
+    background: white;
+    border: 1px solid #bbb;
+}
+
 #input {
     width: 600px;
     height: 200px;
 }
 
-#submit {
-    width: 100%;
-}
-
 #repl {
-    font-size: 16px;
-    margin-top: 10px;
     width: 600px;
     height: 600px;
-    text-align: left;
-    padding: 0.5em;
-    overflow-y: scroll;
-    background: white;
+}
+
+#submit {
+    width: 100%;
 }
 
 #minibuffer {
@@ -41,19 +45,14 @@ body {
 }
 
 #repl div {
-    padding-top: 6px;
+    padding-top: 2px;
 }
 
 #repl div.error {
     color: red;
 }
 
-#repl div.message {
-    font-family: serif;
-    font-style: italic;
-}
-
-#cursor {
+*[contenteditable="true"] {
     outline: unset;
 }
 
