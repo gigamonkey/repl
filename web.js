@@ -2,6 +2,7 @@ const input = document.getElementById("input");
 const repl = document.getElementById("repl");
 const cursor = document.getElementById("cursor");
 const prompt = document.getElementById("prompt");
+const minibuffer = document.getElementById("minibuffer");
 
 const replConsole = {
   log: (text) => outputLine(text),
@@ -32,26 +33,26 @@ const outputLine = (text) => {
   newPrompt();
 };
 
-/*
- * Emit a message to the repl other than printing a value. These messages are
- * formatted differently and inserted before the current prompt.
- */
-const message = (text) => {
+const message = (text) => (minibuffer.innerText = text);
+
+const replError = (text) => {
   const div = document.createElement("div");
-  div.classList.add("message");
-  div.innerText = "" + text;
-  repl.insertBefore(div, prompt.parentNode);
+  div.classList.add("error");
+  div.innerText = text;
+  repl.append(div);
+  newPrompt();
 };
 
 /*
  * Show errors from evaluating code.
  */
-const showError = (message, source, line, column, error) => {
-  const div = document.createElement("div");
-  div.classList.add("error");
-  div.innerText = `${error} (line ${line - 2}, column ${column})`;
-  repl.append(div);
-  newPrompt();
+const showError = (msg, source, line, column, error) => {
+  const errormsg = `${error} (line ${line - 3}, column ${column})`;
+  if (iframe.contentWindow.repl.loading) {
+    message(errormsg);
+  } else {
+    replError(errormsg);
+  }
   return true;
 };
 
@@ -89,7 +90,15 @@ const loadCode = () => {
     iframe.parentNode.removeChild(iframe);
   }
   iframe = newIframe();
-  evaluate(['"use strict";', "repl.message('Loading ...');", text, "repl.message('... loaded.');"].join("\n"));
+  evaluate(
+    [
+      '"use strict";',
+      "repl.loading = true;",
+      "repl.message('Loading ...');",
+      text,
+      "repl.message('Loading ... ok.');",
+    ].join("\n")
+  );
 };
 
 cursor.onkeypress = (e) => {
@@ -102,7 +111,7 @@ cursor.onkeypress = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(['"use strict";', "repl.outputLine(", text, ")"].join("\n"));
+    evaluate(['"use strict";', "repl.loading = false;", "repl.outputLine(", text, ")"].join("\n"));
     return false;
   } else {
     return true;
@@ -111,7 +120,6 @@ cursor.onkeypress = (e) => {
 
 let iframe = newIframe();
 submit.onclick = loadCode;
-cursor.onerror = showError;
 repl.onfocus = (e) => cursor.focus();
 cursor.focus();
 
@@ -127,19 +135,3 @@ window.onkeydown = (e) => {
     loadCode();
   }
 };
-
-/*
-window.onkeypress = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  logKey("press", e);
-  return true;
-}
-
-window.onkeyup = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  logKey("up", e);
-  return true;
-}
-*/

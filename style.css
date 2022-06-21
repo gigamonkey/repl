@@ -1,5 +1,10 @@
+@font-face {
+  font-family: "source-code-pro";
+  src: url("SourceCodePro-VariableFont_wght.woff2");
+}
+
 body {
-    font-family: "Gill Sans", sans-serif;
+    font-family: "source-code-pro", sans-serif;
     text-align: center;
 }
 
@@ -23,12 +28,16 @@ body {
     margin-top: 10px;
     width: 600px;
     height: 600px;
-    background: #bbb;
-    color: #090;
     text-align: left;
     padding: 0.5em;
-    font-family: monospace;
     overflow-y: scroll;
+    background: white;
+}
+
+#minibuffer {
+    font-size: 12px;
+    text-align: left;
+    padding: 6px;
 }
 
 #repl div {
@@ -42,7 +51,6 @@ body {
 #repl div.message {
     font-family: serif;
     font-style: italic;
-    color: #eee;
 }
 
 #cursor {
