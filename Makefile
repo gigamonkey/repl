@@ -5,7 +5,7 @@ files += js
 
 pretty:
 	prettier -w *.js
-	tidy -i -w 120 -m --gnu-emacs yes --quiet yes *.html
+	tidy -i -w 120 -m --gnu-emacs yes --quiet yes --warn-proprietary-attributes no *.html
 
 serve:
 	./node_modules/.bin/esbuild web.js --servedir=. --outdir=./js --bundle --sourcemap
