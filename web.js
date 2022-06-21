@@ -28,7 +28,8 @@ const newPrompt = () => {
  */
 const outputLine = (text) => {
   const div = document.createElement("div");
-  div.innerText = "" + text;
+  div.classList.add("value");
+  div.innerText = JSON.stringify(text);
   repl.append(div);
   newPrompt();
 };

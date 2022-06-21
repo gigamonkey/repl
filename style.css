@@ -56,11 +56,15 @@ p {
 }
 
 #repl div {
-    padding-top: 1px;
+    padding-top: 0px;
 }
 
 #repl div.error {
     color: red;
+}
+
+#repl div.value {
+    padding-bottom: 13px;
 }
 
 #submit {
