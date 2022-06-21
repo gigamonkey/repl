@@ -3,33 +3,40 @@
     src: url("SourceCodePro-VariableFont_wght.woff2");
 }
 
-body {
+* {
     padding: 0;
     margin: 0;
+}
+
+body {
     font-family: "source-code-pro", sans-serif;
     text-align: center;
-    height: 95vh;
+    height: 100vh;
+    width: 100vw;
 }
 
 p {
     padding: 0;
     margin: 0;
-    margin-top: 1em;
     font-family: "Gill Sans", sans-serif;
     text-align: left;
 }
 
 #container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     background: rgba(196, 128, 196, 0.1);
-    padding: 20px 40px;
     height: 100%;
+    width: 100%;
 }
 
-#container * {
-    flex-grow: 0;
+#left, #right {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 0;
     flex-basis: 0;
+    padding: 40px;
 }
 
 #repl {
@@ -60,21 +67,23 @@ p {
 }
 
 #repl div.error {
-    color: red;
+    color: #f44;
 }
 
-#repl div.value {
+#repl div.value, div.error {
     padding-bottom: 13px;
 }
 
 #submit {
-    width: 100%;
 }
 
 #minibuffer {
     font-size: 12px;
     text-align: left;
     padding: 6px;
+    width: 100px;
+    display: inline-block;
+    flex-grow: 1;
 }
 
 *[contenteditable="true"] {
@@ -84,7 +93,8 @@ p {
 .codeLink {
     text-align: right;
     font-size: 12px;
-    margin-top: 1em;
+    height: 20px;
+    padding-top: 10px;
 }
 
 .codeLink * {
@@ -94,3 +104,11 @@ p {
 iframe {
     display: none;
 }
+
+#toolbar {
+    display: flex;
+    justify-content: space-between;
+    height: 20px;
+    padding-top: 10px;
+}
+

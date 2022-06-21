@@ -150,3 +150,4 @@ submit.onclick = loadCode;
 repl.onfocus = (e) => cursor.focus();
 cursor.onkeydown = replEnter;
 cursor.focus();
+loadCode();
