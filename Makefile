@@ -1,6 +1,7 @@
 files := index.html
 files += style.css
 files += $(wildcard *.png)
+files += $(wildcard *.woff2)
 files += js
 
 pretty:
@@ -19,3 +20,4 @@ publish: build
 
 clean:
 	rm -rf ./js
+	find . -name '*~' -delete

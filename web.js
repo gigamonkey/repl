@@ -14,6 +14,7 @@ const replConsole = {
 
 /*
  * Put the prompt and the cursor at the end of the repl, ready for more input.
+ * (They are removed from their parent in replEnter.)
  */
 const newPrompt = () => {
   const div = document.createElement("div");
@@ -109,8 +110,25 @@ const loadCode = () => {
   );
 };
 
-cursor.onkeypress = (e) => {
+const keyBindings = {
+  e: {
+    guard: (e) => e.metaKey,
+    preventDefault: true,
+    fn: loadCode,
+  },
+};
+
+const checkKeyBindings = (e) => {
+  const binding = keyBindings[e.key];
+  if (binding && binding.guard(e)) {
+    if (binding.preventDefault) e.preventDefault();
+    binding.fn();
+  }
+};
+
+const replEnter = (e) => {
   if (e.key === "Enter") {
+    e.preventDefault();
     const text = cursor.innerText;
     const parent = cursor.parentNode;
     const p = prompt.cloneNode(true);
@@ -120,26 +138,12 @@ cursor.onkeypress = (e) => {
     cursor.replaceChildren();
     parent.removeChild(cursor);
     evaluate(['"use strict";', "repl.loading = false;", "repl.outputLine(", text, ")"].join("\n"));
-    return false;
-  } else {
-    return true;
   }
 };
 
 let iframe = newIframe();
+window.onkeydown = checkKeyBindings;
 submit.onclick = loadCode;
 repl.onfocus = (e) => cursor.focus();
+cursor.onkeydown = replEnter;
 cursor.focus();
-
-const logKey = (label, e) => {
-  console.log(`${label} - ${e.key}/${e.keyCode}`);
-  console.log(e);
-};
-
-window.onkeydown = (e) => {
-  // Steal this one.
-  if (e.key === "e" && e.metaKey) {
-    e.preventDefault();
-    loadCode();
-  }
-};
