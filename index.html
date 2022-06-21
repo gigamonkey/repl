@@ -9,21 +9,22 @@
 </head>
 <body>
   <div id="container">
-    <h1>Javascript REPL</h1>
-    <div id="input" tabindex="1" contenteditable="true"></div>
+    <p>Put code you want to keep here. (Declarations, etc.)</p>
+    <div id="input" tabindex="1" contenteditable="true">
+      let x = 10; const fib = (n) =&gt; n &lt; 2 ? 1 : fib(n - 2) + fib(n - 1);
+    </div>
     <div>
       <button id="submit">Evaluate</button>
     </div>
+    <p>Evaluate expressions here.</p>
     <div id="repl" tabindex="0" autofocus="">
       <div>
         <span id="prompt">&gt;&nbsp;</span><span id="cursor" contenteditable="true"></span>
       </div>
     </div>
     <div id="minibuffer"></div>
-    <div class="codeLink">
-      <a href="https://github.com/gigamonkey/repl"><img src="GitHub-Mark-32px.png" width="12" height="12" alt=
-      "GitHub"></a> <a href="https://github.com/gigamonkey/repl">https://github.com/gigamonkey/repl</a>
-    </div>
+    <p class="codeLink"><a href="https://github.com/gigamonkey/repl"><img src="GitHub-Mark-32px.png" width="12" height=
+    "12" alt="GitHub"></a> <a href="https://github.com/gigamonkey/repl">https://github.com/gigamonkey/repl</a></p>
   </div>
 </body>
 </html>
