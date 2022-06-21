@@ -49,7 +49,7 @@ const message = (text) => {
 const showError = (message, source, line, column, error) => {
   const div = document.createElement("div");
   div.classList.add("error");
-  div.innerText = `${error} (line ${line}, column ${column})`;
+  div.innerText = `${error} (line ${line - 2}, column ${column})`;
   repl.append(div);
   newPrompt();
   return true;
@@ -89,12 +89,7 @@ const loadCode = () => {
     iframe.parentNode.removeChild(iframe);
   }
   iframe = newIframe();
-  evaluate(`
-    "use strict";
-    repl.message('Loading ...');
-    ${text};
-    repl.message('... loaded.');
-  `);
+  evaluate(['"use strict";', "repl.message('Loading ...');", text, "repl.message('... loaded.');"].join("\n"));
 };
 
 cursor.onkeypress = (e) => {
@@ -107,7 +102,7 @@ cursor.onkeypress = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(`repl.outputLine(${text})`);
+    evaluate(['"use strict";', "repl.outputLine(", text, ")"].join("\n"));
     return false;
   } else {
     return true;
