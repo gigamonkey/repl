@@ -56,7 +56,7 @@ const showError = (msg, source, line, column, error) => {
     return;
   }
 
-  const errormsg = `${error} (line ${line - 3}, column ${column})`;
+  const errormsg = source !== "code" ? error : `${error} (line ${line - 3}, column ${column})`;
   if (iframe.contentWindow.repl.loading) {
     message(errormsg);
   } else {
@@ -106,6 +106,7 @@ const loadCode = () => {
       "repl.message('Loading ...');",
       text,
       "repl.message('Loading ... ok.');",
+      "//# sourceURL=code",
     ].join("\n")
   );
 };
@@ -137,7 +138,9 @@ const replEnter = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(['"use strict";', "repl.loading = false;", "repl.outputLine(", text, ")"].join("\n"));
+    evaluate(
+      ['"use strict";', "repl.loading = false;", "repl.outputLine(", text, ")", "//# sourceURL=repl"].join("\n")
+    );
   }
 };
 
