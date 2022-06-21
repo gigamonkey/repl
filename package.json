@@ -16,5 +16,8 @@
     "@js-temporal/polyfill": "^0.4.1",
     "esbuild": "^0.14.45",
     "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "cssbeautify": "^0.3.1"
   }
 }

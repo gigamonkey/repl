@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "source-code-pro";
-  src: url("SourceCodePro-VariableFont_wght.woff2");
+    font-family: "source-code-pro";
+    src: url("SourceCodePro-VariableFont_wght.woff2");
 }
 
 body {
@@ -66,4 +66,7 @@ div.codeLink * {
     vertical-align: middle;
 }
 
-iframe { display: none; }
+iframe {
+    display: none;
+}
+
