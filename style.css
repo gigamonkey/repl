@@ -4,18 +4,36 @@
 }
 
 body {
+    padding: 0;
+    margin: 0;
     font-family: "source-code-pro", sans-serif;
     text-align: center;
+    height: 95vh;
 }
 
 p {
+    padding: 0;
+    margin: 0;
+    margin-top: 1em;
     font-family: "Gill Sans", sans-serif;
+    text-align: left;
 }
 
 #container {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     background: rgba(196, 128, 196, 0.1);
     padding: 20px 40px;
+    height: 100%;
+}
+
+#container * {
+    flex-grow: 0;
+    flex-basis: 0;
+}
+
+#repl {
+    flex-grow: 4;
 }
 
 #input, #repl {
@@ -29,14 +47,12 @@ p {
 }
 
 #input {
-    width: 600px;
-    height: 200px;
     white-space: pre;
+    flex-grow: 4;
+    flex-shrink: 0;
 }
 
 #repl {
-    width: 600px;
-    height: 600px;
 }
 
 #repl div {
