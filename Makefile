@@ -47,3 +47,6 @@ publish: build
 clean:
 	rm -rf ./js
 	find . -name '*~' -delete
+
+pristine:
+	git clean -fdx
