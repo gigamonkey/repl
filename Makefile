@@ -26,7 +26,7 @@ worker_entry_points += vs/language/html/html.worker.js
 worker_entry_points += vs/language/typescript/ts.worker.js
 worker_entry_points += vs/editor/editor.worker.js
 
-all: build
+all: js/web.js $(addprefix js/, $(worker_entry_points))
 
 setup:
 	npm install
@@ -45,9 +45,7 @@ pretty:
 serve:
 	$(esbuild) web.js $(esbuild_opts) --servedir=.
 
-build: js/web.js $(addprefix js/, $(worker_entry_points))
-
-publish: build
+publish: all
 	./publish.sh $(files)
 
 clean:
@@ -56,3 +54,6 @@ clean:
 
 pristine:
 	git clean -fdx
+
+
+.PHONY: setup pretty serve publish clean pristine
