@@ -7,7 +7,10 @@ files += js
 cssbeautify := ./node_modules/.bin/cssbeautify
 
 esbuild := ./node_modules/.bin/esbuild
-esbuild_opts := --outdir=./js --bundle --sourcemap
+esbuild_opts := --outdir=./js
+esbuild_opts += --bundle
+esbuild_opts += --sourcemap
+esbuild_opts += --loader:.ttf=file
 
 tidy_opts := -i
 tidy_opts += -w 120
@@ -32,7 +35,7 @@ js/%.js: ./node_modules/monaco-editor/esm/%.js
 	$(esbuild) $< $(esbuild_opts) --outbase=./node_modules/monaco-editor/esm/
 
 js/web.js: web.js
-	$(esbuild) web.js $(esbuild_opts) --loader:.ttf=file
+	$(esbuild) web.js $(esbuild_opts)
 
 pretty:
 	prettier -w *.js
