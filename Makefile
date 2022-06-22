@@ -25,6 +25,9 @@ worker_entry_points += vs/editor/editor.worker.js
 
 all: build
 
+setup:
+	npm install
+
 js/%.js: ./node_modules/monaco-editor/esm/%.js
 	$(esbuild) $< $(esbuild_opts) --outbase=./node_modules/monaco-editor/esm/
 
