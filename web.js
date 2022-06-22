@@ -93,6 +93,7 @@ const replError = (text) => {
 const showError = (msg, source, line, column, error) => {
   // This seems to be a Chrome bug. Doesn't always happen but probably safe to
   // filter this message.
+  // https://bugs.chromium.org/p/chromium/issues/detail?id=1328008
   // https://stackoverflow.com/questions/72396527/evalerror-possible-side-effect-in-debug-evaluate-in-google-chrome
   if (error === "EvalError: Possible side-effect in debug-evaluate") {
     return;
