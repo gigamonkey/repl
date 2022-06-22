@@ -1,5 +1,5 @@
-files := index.html
-files += style.css
+files := $(wildcard *.html)
+files += $(wildcard *.css)
 files += $(wildcard *.png)
 files += $(wildcard *.woff2)
 files += js
