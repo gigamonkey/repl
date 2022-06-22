@@ -74,9 +74,11 @@ const print = (text) => {
   newPrompt();
 };
 
-const message = (text) => {
+const message = (text, fade) => {
   minibuffer.innerText = text;
-  setTimeout(() => (minibuffer.innerText = ""), 1000);
+  if (fade) {
+    setTimeout(() => (minibuffer.innerText = ""), fade);
+  }
 };
 
 const replError = (text) => {
@@ -99,9 +101,10 @@ const showError = (msg, source, line, column, error) => {
     return;
   }
 
-  const errormsg = source !== "code" ? error : `${error} (line ${line - 3}, column ${column})`;
+  console.log(source);
+  const errormsg = source === "repl" ? error : `${error} (line ${line - 2}, column ${column})`;
   if (iframe.contentWindow.repl.loading) {
-    message(errormsg);
+    message(errormsg, 0);
   } else {
     replError(errormsg);
   }
@@ -126,10 +129,12 @@ const newIframe = () => {
  * evaluated. The code can use the function in the iframe's repl object (see
  * newIframe) to communicate back.
  */
-const evaluate = (code) => {
-  const d = window.frames[0].document;
+const evaluate = (code, source) => {
+  const d = iframe.contentDocument;
+  const w = iframe.contentWindow;
   const s = d.createElement("script");
-  s.append(document.createTextNode(code));
+  s.append(d.createTextNode(`"use strict";\n${code}\n//# sourceURL=${source}`));
+  w.repl.loading = source !== "repl";
   d.documentElement.append(s);
 };
 
@@ -137,22 +142,12 @@ const evaluate = (code) => {
  * Load the code from input into the iframe, creating a new iframe if needed.
  */
 const loadCode = () => {
-  //const text = input.innerText;
-  const text = editor.getValue();
+  const code = editor.getValue();
   if (iframe !== null) {
     iframe.parentNode.removeChild(iframe);
   }
   iframe = newIframe();
-  evaluate(
-    [
-      '"use strict";',
-      "repl.loading = true;",
-      "repl.message('Loading ...');",
-      text,
-      "repl.message('Loading ... ok.');",
-      "//# sourceURL=code",
-    ].join("\n")
-  );
+  evaluate(`\n${code}\nrepl.message('Loaded.', 1000);`, "editor");
 };
 
 const keyBindings = {
@@ -182,7 +177,7 @@ const replEnter = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(['"use strict";', "repl.loading = false;", "repl.print(", text, ")", "//# sourceURL=repl"].join("\n"));
+    evaluate(`repl.print(\n${text}\n)`, "repl");
   }
 };
 
