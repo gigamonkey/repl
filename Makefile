@@ -9,6 +9,13 @@ cssbeautify := ./node_modules/.bin/cssbeautify
 esbuild := ./node_modules/.bin/esbuild
 esbuild_opts := --outdir=./js --bundle --sourcemap
 
+tidy_opts := -i
+tidy_opts += -w 120
+tidy_opts += -m
+tidy_opts += --gnu-emacs yes
+tidy_opts += --quiet yes
+tidy_opts += --warn-proprietary-attributes no
+tidy_opts += --sort-attributes alpha
 
 worker_entry_points := vs/language/json/json.worker.js
 worker_entry_points += vs/language/css/css.worker.js
@@ -26,7 +33,7 @@ js/web.js: web.js
 
 pretty:
 	prettier -w *.js
-	tidy -i -w 120 -m --gnu-emacs yes --quiet yes --warn-proprietary-attributes no --sort-attributes alpha *.html
+	tidy $(tidy_opts) *.html
 	cp style.css style.css~; $(cssbeautify) style.css~ > style.css
 
 serve:
