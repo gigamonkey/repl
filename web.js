@@ -184,6 +184,22 @@ const replEnter = (e) => {
 const editor = monaco.editor.create(document.getElementById("input"), {
   value: ["let x = 10;", "", "const fib = (n) => n < 2 ? n : fib(n - 2) + fib(n - 1);"].join("\n"),
   language: "javascript",
+
+  // Code to disable intellisense from https://github.com/microsoft/monaco-editor/issues/1681
+  quickSuggestions: {
+    other: false,
+    comments: false,
+    strings: false,
+  },
+  parameterHints: {
+    enabled: false,
+  },
+  ordBasedSuggestions: false,
+  suggestOnTriggerCharacters: false,
+  acceptSuggestionOnEnter: "off",
+  tabCompletion: "off",
+  wordBasedSuggestions: false,
+  // End code to disable intellisense.
 });
 
 let iframe = newIframe();
