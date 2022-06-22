@@ -1,32 +1,31 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
 <head>
   <title>Javascript REPL</title>
-  <meta name="generator" content="HTML Tidy for HTML5 for Apple macOS version 5.8.0">
-  <meta http-equiv='content-type' content='text/html; charset=utf-8'>
-  <link href='style.css' media='all' rel='stylesheet' type='text/css'>
-  <script type="module" src="./js/web.js"></script>
+  <meta content="HTML Tidy for HTML5 for Apple macOS version 5.8.0" name="generator">
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <link href="style.css" media="all" rel="stylesheet" type="text/css">
+  <link href="monaco.css" media="all" rel="stylesheet" type="text/css">
+  <script src="./js/web.js" type="module"></script>
 </head>
 <body>
   <div id="container">
     <div id="left">
       <p>Put definitions here.</p>
-      <pre id="input" tabindex="1" contenteditable="true">let x = 10;
-const fib = (n) =&gt; n &lt; 2 ? n : fib(n - 2) + fib(n - 1);
-      </pre>
+      <div id="input"></div>
       <div id="toolbar">
-        <span id="minibuffer"></span> <button id="submit">Reëvaluate</button>
+        <span id="minibuffer"></span> <button id="submit">Load</button>
       </div>
     </div>
     <div id="right">
       <p>Evaluate expressions here.</p>
-      <div id="repl" tabindex="0" autofocus="">
+      <div autofocus="" id="repl" tabindex="0">
         <div>
-          <span id="prompt">&gt;&nbsp;</span><span id="cursor" contenteditable="true"></span>
+          <span id="prompt">&gt;&nbsp;</span><span contenteditable="true" id="cursor"></span>
         </div>
       </div>
-      <p class="codeLink"><a href="https://github.com/gigamonkey/repl"><img src="GitHub-Mark-32px.png" width="12"
-      height="12" alt="GitHub"></a> <a href=
+      <p class="codeLink"><a href="https://github.com/gigamonkey/repl"><img alt="GitHub" height="12" src=
+      "GitHub-Mark-32px.png" width="12"></a> <a href=
       "https://github.com/gigamonkey/repl">https://github.com/gigamonkey/repl</a></p>
     </div>
   </div>

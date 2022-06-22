@@ -39,27 +39,18 @@ p {
     padding: 40px;
 }
 
-#repl {
-    flex-grow: 4;
-}
-
 #input, #repl {
-    font-size: 16px;
+    border: 1px solid #ccc;
+    flex-grow: 4;
     margin-top: 10px;
     text-align: left;
-    padding: 0.5em;
-    overflow-y: scroll;
-    background: white;
-    border: 1px solid #bbb;
-}
-
-#input {
-    white-space: pre;
-    flex-grow: 4;
-    flex-shrink: 0;
 }
 
 #repl {
+    background: white;
+    font-size: 16px;
+    overflow-y: scroll;
+    padding: 0.5em;
 }
 
 #repl div {
@@ -74,7 +65,8 @@ p {
     padding-bottom: 13px;
 }
 
-#submit {
+#repl div.log {
+    font-style: italic;
 }
 
 #minibuffer {
@@ -111,4 +103,3 @@ iframe {
     height: 20px;
     padding-top: 10px;
 }
-

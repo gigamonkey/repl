@@ -1,3 +1,31 @@
+import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
+
+self.MonacoEnvironment = {
+  getWorkerUrl: function (moduleId, label) {
+    switch (label) {
+      case "json":
+        return "./js/vs/language/json/json.worker.js";
+
+      case "css":
+      case "scss":
+      case "less":
+        return "./js/vs/language/css/css.worker.js";
+
+      case "html":
+      case "handlebars":
+      case "razor":
+        return "./js/vs/language/html/html.worker.js";
+
+      case "typescript":
+      case "javascript":
+        return "./js/vs/language/typescript/ts.worker.js";
+
+      default:
+        return "./js/vs/editor/editor.worker.js";
+    }
+  },
+};
+
 const input = document.getElementById("input");
 const repl = document.getElementById("repl");
 const cursor = document.getElementById("cursor");
@@ -5,11 +33,11 @@ const prompt = document.getElementById("prompt");
 const minibuffer = document.getElementById("minibuffer");
 
 const replConsole = {
-  log: (text) => outputLine(text),
-  info: (text) => outputLine(`INFO: ${text}`),
-  warn: (text) => outputLine(`WARN: ${text}`),
-  error: (text) => outputLine(`ERROR: ${text}`),
-  debug: (text) => outputLine(`DEBUG: ${text}`),
+  log: (text) => log(text),
+  info: (text) => log(`INFO: ${text}`),
+  warn: (text) => log(`WARN: ${text}`),
+  error: (text) => log(`ERROR: ${text}`),
+  debug: (text) => log(`DEBUG: ${text}`),
 };
 
 /*
@@ -25,17 +53,31 @@ const newPrompt = () => {
 };
 
 /*
- * Output a line in the repl div.
+ * Output a log line in the repl div.
  */
-const outputLine = (text) => {
+const log = (text) => {
   const div = document.createElement("div");
-  div.classList.add("value");
-  div.innerText = JSON.stringify(text);
+  div.classList.add("log");
+  div.innerText = text;
   repl.append(div);
   newPrompt();
 };
 
-const message = (text) => (minibuffer.innerText = text);
+/*
+ * Output a value in the repl div.
+ */
+const print = (text) => {
+  const div = document.createElement("div");
+  div.classList.add("value");
+  div.innerText = "⇒ " + JSON.stringify(text);
+  repl.append(div);
+  newPrompt();
+};
+
+const message = (text) => {
+  minibuffer.innerText = text;
+  setTimeout(() => (minibuffer.innerText = ""), 1000);
+};
 
 const replError = (text) => {
   const div = document.createElement("div");
@@ -72,7 +114,7 @@ const newIframe = () => {
   const iframe = document.createElement("iframe");
   iframe.setAttribute("src", "about:blank");
   document.querySelector("body").append(iframe);
-  iframe.contentWindow.repl = { outputLine, message };
+  iframe.contentWindow.repl = { print, message };
   iframe.contentWindow.onerror = showError;
   iframe.contentWindow.console = replConsole;
   return iframe;
@@ -94,7 +136,8 @@ const evaluate = (code) => {
  * Load the code from input into the iframe, creating a new iframe if needed.
  */
 const loadCode = () => {
-  const text = input.innerText;
+  //const text = input.innerText;
+  const text = editor.getValue();
   if (iframe !== null) {
     iframe.parentNode.removeChild(iframe);
   }
@@ -138,11 +181,14 @@ const replEnter = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(
-      ['"use strict";', "repl.loading = false;", "repl.outputLine(", text, ")", "//# sourceURL=repl"].join("\n")
-    );
+    evaluate(['"use strict";', "repl.loading = false;", "repl.print(", text, ")", "//# sourceURL=repl"].join("\n"));
   }
 };
+
+const editor = monaco.editor.create(document.getElementById("input"), {
+  value: ["let x = 10;", "", "const fib = (n) => n < 2 ? n : fib(n - 2) + fib(n - 1);"].join("\n"),
+  language: "javascript",
+});
 
 let iframe = newIframe();
 window.onkeydown = checkKeyBindings;

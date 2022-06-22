@@ -2,7 +2,7 @@
   "name": "calendar",
   "type": "module",
   "version": "1.0.0",
-  "description": "Calendar for BHS course.",
+  "description": "Browser based Javascript REPL.",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -15,7 +15,8 @@
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.1",
     "esbuild": "^0.14.45",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "monaco-editor": "^0.33.0"
   },
   "devDependencies": {
     "cssbeautify": "^0.3.1"
