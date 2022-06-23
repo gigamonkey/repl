@@ -16,7 +16,6 @@
     "monaco-editor": "^0.33.0"
   },
   "devDependencies": {
-    "cssbeautify": "^0.3.1",
     "esbuild": "^0.14.45"
   }
 }

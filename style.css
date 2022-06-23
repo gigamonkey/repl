@@ -1,104 +1,107 @@
 @font-face {
-    font-family: "source-code-pro";
-    src: url("SourceCodePro-VariableFont_wght.woff2");
+  font-family: "source-code-pro";
+  src: url("SourceCodePro-VariableFont_wght.woff2");
 }
 
 * {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 body {
-    font-family: Menlo, Monaco, "Courier New", monospace;
-    font-size: 12px;
-    text-align: center;
-    height: 100vh;
-    width: 100vw;
+  font-family: Menlo, Monaco, "Courier New", monospace;
+  font-size: 12px;
+  text-align: center;
+  height: 100vh;
+  width: 100vw;
 }
 
 p {
-    padding: 0;
-    margin: 0;
-    font-family: "Gill Sans", sans-serif;
-    text-align: left;
-    font-size: 16px;
+  padding: 0;
+  margin: 0;
+  font-family: "Gill Sans", sans-serif;
+  text-align: left;
+  font-size: 16px;
 }
 
 #container {
-    display: flex;
-    flex-direction: row;
-    background: rgba(196, 128, 196, 0.1);
-    height: 100%;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  background: rgba(196, 128, 196, 0.1);
+  height: 100%;
+  width: 100%;
 }
 
-#left, #right {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 0;
-    flex-basis: 0;
-    padding: 40px;
+#left,
+#right {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 0;
+  padding: 40px;
 }
 
-#input, #repl {
-    border: 1px solid #ccc;
-    flex-grow: 4;
-    margin-top: 10px;
-    text-align: left;
+#input,
+#repl {
+  border: 1px solid #ccc;
+  flex-grow: 4;
+  margin-top: 10px;
+  text-align: left;
 }
 
 #repl {
-    background: #fffffe;
-    overflow-y: scroll;
-    padding: 0.5em;
+  background: #fffffe;
+  overflow-y: scroll;
+  padding: 0.5em;
 }
 
 #repl div {
-    padding-top: 0px;
+  padding-top: 0px;
 }
 
 #repl div.error {
-    color: #f44;
+  color: #f44;
 }
 
-#repl div.value, div.error {
-    padding-bottom: 13px;
+#repl div.value,
+div.error {
+  padding-bottom: 13px;
 }
 
 #repl div.log {
-    font-style: italic;
+  font-style: italic;
 }
 
 #minibuffer {
-    text-align: left;
-    padding: 6px;
-    width: 100px;
-    display: inline-block;
-    flex-grow: 1;
+  text-align: left;
+  padding: 6px;
+  width: 100px;
+  display: inline-block;
+  flex-grow: 1;
 }
 
 *[contenteditable="true"] {
-    outline: unset;
+  outline: unset;
 }
 
 .codeLink {
-    text-align: right;
-    height: 20px;
-    padding-top: 10px;
+  text-align: right;
+  height: 20px;
+  padding-top: 10px;
 }
 
 .codeLink * {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 iframe {
-    display: none;
+  display: none;
 }
 
 #toolbar {
-    display: flex;
-    justify-content: space-between;
-    height: 20px;
-    padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  height: 20px;
+  padding-top: 10px;
 }

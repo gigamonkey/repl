@@ -1,0 +1,10 @@
+add-meta-charset: yes
+doctype: html5
+gnu-emacs: yes
+indent: auto
+quiet: yes
+sort-attributes: alpha
+tidy-mark: no
+warn-proprietary-attributes: no
+wrap: 120
+write-back: yes
