@@ -32,12 +32,14 @@ const cursor = document.getElementById("cursor");
 const prompt = document.getElementById("prompt");
 const minibuffer = document.getElementById("minibuffer");
 
+const stringify = (args) => args.map(String).join(" ");
+
 const replConsole = {
-  log: (text) => log(text),
-  info: (text) => log(`INFO: ${text}`),
-  warn: (text) => log(`WARN: ${text}`),
-  error: (text) => log(`ERROR: ${text}`),
-  debug: (text) => log(`DEBUG: ${text}`),
+  log: (...text) => log(stringify(text)),
+  info: (...text) => log(`INFO: ${stringify(text)}`),
+  warn: (...text) => log(`WARN: ${stringify(text)}`),
+  error: (...text) => log(`ERROR: ${stringify(text)}`),
+  debug: (...text) => log(`DEBUG: ${stringify(text)}`),
 };
 
 /*
@@ -101,7 +103,6 @@ const showError = (msg, source, line, column, error) => {
     return;
   }
 
-  console.log(source);
   const errormsg = source === "repl" ? error : `${error} (line ${line - 2}, column ${column})`;
   if (iframe.contentWindow.repl.loading) {
     message(errormsg, 0);
