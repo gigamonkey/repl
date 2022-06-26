@@ -185,6 +185,7 @@ const replEnter = (e) => {
 const editor = monaco.editor.create(document.getElementById("input"), {
   value: ["let x = 10;", "", "const fib = (n) => n < 2 ? n : fib(n - 2) + fib(n - 1);"].join("\n"),
   language: "javascript",
+  automaticLayout: true,
 
   // Code to disable intellisense from https://github.com/microsoft/monaco-editor/issues/1681
   quickSuggestions: {
@@ -205,6 +206,7 @@ const editor = monaco.editor.create(document.getElementById("input"), {
 
 let iframe = newIframe();
 window.onkeydown = checkKeyBindings;
+window.onresize = (e) => editor.layout({ width: 0, height: 0 });
 submit.onclick = loadCode;
 repl.onfocus = (e) => cursor.focus();
 cursor.onkeydown = replEnter;
