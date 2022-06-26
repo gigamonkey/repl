@@ -1,3 +1,4 @@
+import * as acorn from "acorn";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
 
 self.MonacoEnvironment = {
@@ -167,10 +168,16 @@ const checkKeyBindings = (e) => {
   }
 };
 
+const isExpression = (code) => {
+  const parsed = acorn.parse(code, { ecmaVersion: 2022 });
+  return parsed.body.length === 1 && parsed.body[0].type == "ExpressionStatement";
+};
+
 const replEnter = (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
-    const text = cursor.innerText;
+    let text = cursor.innerText;
+
     const parent = cursor.parentNode;
     const p = prompt.cloneNode(true);
     p.removeAttribute("id");
@@ -178,7 +185,15 @@ const replEnter = (e) => {
     parent.insertBefore(document.createTextNode(text), cursor);
     cursor.replaceChildren();
     parent.removeChild(cursor);
-    evaluate(`repl.print(\n${text}\n)`, "repl");
+
+    if (isExpression(text)) {
+      while (text.endsWith(";")) {
+        text = text.substring(0, text.length - 1);
+      }
+      evaluate(`repl.print((\n${text}\n))`, "repl");
+    } else {
+      evaluate(`\n${text}\nrepl.print(void 0);`, "repl");
+    }
   }
 };
 
