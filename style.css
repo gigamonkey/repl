@@ -45,7 +45,7 @@ p {
 #input,
 #repl {
   border: 1px solid #ccc;
-  flex-grow: 4;
+  flex-grow: 1;
   margin-top: 10px;
   text-align: left;
 }
