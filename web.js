@@ -67,29 +67,40 @@ const log = (text) => {
 };
 
 /*
- * Output a value in the repl div.
+ * Output to the repl with a particular CSS class.
  */
-const print = (text) => {
+const toRepl = (text, clazz) => {
   const div = document.createElement("div");
-  div.classList.add("value");
-  div.innerText = "⇒ " + JSON.stringify(text);
+  div.classList.add(clazz);
+  div.append(text);
   repl.append(div);
   newPrompt();
 };
+
+const textNode = (s) => document.createTextNode(s);
+
+/*
+ * Output a value in the repl div.
+ */
+const print = (value) => {
+  const span = document.createElement("span");
+  const arrow = document.createElement("span");
+  arrow.classList.add("output");
+  arrow.append(textNode("⇒ "));
+  span.append(arrow);
+  span.append(textNode(JSON.stringify(value)));
+  toRepl(span, "value");
+};
+
+const replMessage = (text) => toRepl(textNode(text), "message");
+
+const replError = (text) => toRepl(textNode(text), "error");
 
 const message = (text, fade) => {
   minibuffer.innerText = text;
   if (fade) {
     setTimeout(() => (minibuffer.innerText = ""), fade);
   }
-};
-
-const replError = (text) => {
-  const div = document.createElement("div");
-  div.classList.add("error");
-  div.innerText = text;
-  repl.append(div);
-  newPrompt();
 };
 
 /*
@@ -120,7 +131,7 @@ const newIframe = () => {
   const iframe = document.createElement("iframe");
   iframe.setAttribute("src", "about:blank");
   document.querySelector("body").append(iframe);
-  iframe.contentWindow.repl = { print, message };
+  iframe.contentWindow.repl = { print, message, replMessage };
   iframe.contentWindow.onerror = showError;
   iframe.contentWindow.console = replConsole;
   return iframe;
@@ -192,7 +203,7 @@ const replEnter = (e) => {
       }
       evaluate(`repl.print((\n${text}\n))`, "repl");
     } else {
-      evaluate(`\n${text}\nrepl.print(void 0);`, "repl");
+      evaluate(`\n${text}\nrepl.replMessage("Ok.");`, "repl");
     }
   }
 };

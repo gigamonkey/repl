@@ -60,12 +60,22 @@ p {
   padding-top: 0px;
 }
 
+span.prompt,
+span.output {
+  font-size: 1.3em;
+}
+
 #repl div.error {
   color: #f44;
 }
 
+#repl div.message {
+  font-style: italic;
+}
+
 #repl div.value,
-div.error {
+div.error,
+div.message {
   padding-bottom: 13px;
 }
 
