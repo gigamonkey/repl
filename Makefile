@@ -5,10 +5,11 @@ files += $(wildcard *.woff2)
 files += js
 
 esbuild := ./node_modules/.bin/esbuild
-esbuild_opts := --outdir=./js
-esbuild_opts += --bundle
-esbuild_opts += --sourcemap
+esbuild_opts := --bundle
 esbuild_opts += --loader:.ttf=file
+esbuild_opts += --minify
+esbuild_opts += --outdir=./js
+esbuild_opts += --sourcemap
 
 worker_entry_points := vs/language/json/json.worker.js
 worker_entry_points += vs/language/css/css.worker.js
