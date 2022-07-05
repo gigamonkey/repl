@@ -27,15 +27,16 @@ const descriptor = (x) => {
 };
 
 class Repl {
-  constructor(div) {
+  constructor(div, keybindings) {
     this.div = div;
+    this.keybindings = keybindings;
     this.cursor = span("cursor", "&nbsp;");
 
     this.div.onkeydown = (e) => {
       // Extract the bits we care about.
       const { key, ctrlKey, metaKey, altKey } = e;
       const x = { key, ctrlKey, metaKey, altKey };
-      const b = getBinding(descriptor(x));
+      const b = this.keybindings.getBinding(descriptor(x));
 
       if (b) {
         b(repl, x);
@@ -127,28 +128,34 @@ const eol = (repl, x) => {
 ////////////////////////////////////////////////////////////////////////////////
 // Bindings
 
-const keybindings = {
+class Keybindings {
+  constructor(bindings) {
+    this.bindings = bindings;
+  }
+
+  getBinding(descriptor) {
+    console.log(descriptor);
+    if (descriptor in this.bindings) {
+      console.log("Found binding");
+      return this.bindings[descriptor];
+    } else if (descriptor.length === 1) {
+      console.log("Default binding");
+      return selfInsert;
+    } else {
+      console.log(`No binding for ${descriptor}`);
+      return false;
+    }
+  }
+}
+
+const keybindings = new Keybindings({
   Backspace: backspace,
   Enter: enter,
   ArrowLeft: left,
   ArrowRight: right,
   "Control-a": bol,
   "Control-e": eol,
-};
-
-const getBinding = (descriptor) => {
-  console.log(descriptor);
-  if (descriptor in keybindings) {
-    console.log("Found binding");
-    return keybindings[descriptor];
-  } else if (descriptor.length === 1) {
-    console.log("Default binding");
-    return selfInsert;
-  } else {
-    console.log(`No binding for ${descriptor}`);
-    return false;
-  }
-};
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main DOM manipulation
@@ -160,7 +167,7 @@ const span = (clazz, html) => {
   return s;
 };
 
-const repl = new Repl(document.getElementById("repl"));
+const repl = new Repl(document.getElementById("repl"), keybindings);
 
 repl.divAndPrompt();
 
