@@ -17,18 +17,22 @@ body {
   font-size: 14px;
 }
 
+#repl div {
+  margin: 6px 4px;
+}
+
 #repl:focus {
   outline: none;
 }
 
 #repl:focus .cursor {
-  background: green;
-  display: inline-block;
-  width: 2px;
+  background: black;
 }
 
-#repl:focus #repl div {
-  margin: 6px 4px;
+.cursor {
+  background: transparent;
+  display: inline-block;
+  width: 1px;
 }
 
 .prompt {
