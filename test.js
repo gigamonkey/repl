@@ -8,12 +8,20 @@ const repl = document.getElementById("repl");
 // Similarly a binding like Shift-a would never happen because only Shift-A can
 // occur. (Probably for Shift at least we should just not include it in
 // bindings.)
-//
+
+// TODO:
+
+// - Movement of cursor within the line. Left, Right, Beginning of Line, End of Line.
+// - Shift movement for selection.
+// - History on up and down arrow.
+// - Brace flashing.
+// - Token colorizing.
 
 const descriptor = (x) => {
-  console.log(JSON.stringify(x));
   let keys = [];
-  //if (x.shiftKey) keys.push("Shift");
+  // Note: Alt and Meta are likely different on different OSes.
+  // If we actually use bindings for either of those may need to
+  // provide an option to flip their meaning.
   if (x.ctrlKey) keys.push("Control");
   if (x.altKey) keys.push("Alt");
   if (x.metaKey) keys.push("Meta");
@@ -24,8 +32,6 @@ const descriptor = (x) => {
 const selfInsert = (repl, x) => {
   const cursor = repl.querySelector(".cursor");
   cursor.parentElement.insertBefore(document.createTextNode(x.key), cursor);
-
-  //repl.appendChild(document.createTextNode(x.key));
 };
 
 const backspace = (repl, x) => {
@@ -82,16 +88,27 @@ const divAndPrompt = (repl) => {
 repl.onkeydown = (e) => {
   console.log(e);
   // Extract the bits we care about.
-  const { key, ctrlKey, shiftKey, metaKey, altKey } = e;
-  const x = { key, ctrlKey, shiftKey, metaKey, altKey };
+  const { key, ctrlKey, metaKey, altKey } = e;
+  const x = { key, ctrlKey, metaKey, altKey };
 
   const b = getBinding(descriptor(x));
 
   if (b !== undefined) {
     b(repl, x);
+    e.stopPropagation();
+    e.preventDefault();
   }
-  e.stopPropagation();
-  e.preventDefault();
+};
+
+repl.onpaste = (e) => {
+  const data = e.clipboardData.getData("text/plain");
+  for (let c of data) {
+    const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
+    const b = getBinding(descriptor(x));
+    if (b !== undefined) {
+      b(repl, x);
+    }
+  }
 };
 
 divAndPrompt(repl);
