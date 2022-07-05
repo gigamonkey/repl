@@ -1,0 +1,32 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  width: 100%;
+  margin: auto;
+}
+
+#repl {
+  margin: 1in auto;
+  width: 500px;
+  height: calc(100vh - 2in);
+  font-family: monospace;
+  border: 1px solid black;
+  font-size: 24px;
+}
+
+.prompt {
+  //background: red;
+  display: inline-block;
+  vertical-align: top;
+  //width: 1.2em;
+}
+
+.cursor {
+  background: green;
+  display: inline-block;
+  width: 2px;
+
+}
