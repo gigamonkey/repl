@@ -14,19 +14,17 @@ body {
   height: calc(100vh - 2in);
   font-family: monospace;
   border: 1px solid black;
-  font-size: 24px;
+  font-size: 14px;
 }
 
 .prompt {
-  //background: red;
   display: inline-block;
   vertical-align: top;
-  //width: 1.2em;
+  width: 1.2em;
 }
 
 .cursor {
   background: green;
   display: inline-block;
   width: 2px;
-
 }

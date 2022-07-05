@@ -19,18 +19,24 @@ const descriptor = (x) => {
   if (x.metaKey) keys.push("Meta");
   if (keys.indexOf(x.key) === -1) keys.push(x.key);
   return keys.join("-");
-}
+};
 
 const selfInsert = (repl, x) => {
-  repl.appendChild(document.createTextNode(x.key));
+  const cursor = repl.querySelector(".cursor");
+  cursor.parentElement.insertBefore(document.createTextNode(x.key), cursor);
+
+  //repl.appendChild(document.createTextNode(x.key));
 };
 
 const backspace = (repl, x) => {
-  const last = repl.childNodes[repl.childNodes.length - 1];
+  //const last = repl.childNodes[repl.childNodes.length - 1];
+  const cursor = repl.querySelector(".cursor");
+
+  const last = cursor.previousSibling;
   if (last.nodeType === 3) {
     // TEXT_NODE
     if (last.length === 1) {
-      repl.removeChild(last);
+      last.parentElement.removeChild(last);
     } else {
       last.deleteData(last.length - 1, 1);
     }
@@ -50,7 +56,7 @@ const getBinding = (descriptor) => {
     console.log("Default binding");
     return selfInsert;
   } else {
-    console.log("No binding.");
+    console.log(`No binding for ${descriptor}`);
   }
 };
 
@@ -58,7 +64,6 @@ const divAndPrompt = (repl) => {
   const div = document.createElement("div");
   const prompt = document.createElement("span");
   prompt.innerText = "»";
-  //prompt.innerText = ">>";
   prompt.classList.add("prompt");
 
   const token = document.createElement("span");
@@ -66,14 +71,13 @@ const divAndPrompt = (repl) => {
 
   const cursor = document.createElement("span");
   cursor.classList.add("cursor");
-  cursor.innerHTML = "&nbsp;"
+  cursor.innerHTML = "&nbsp;";
 
   div.append(prompt);
   div.append(token);
   div.append(cursor);
   repl.append(div);
 };
-
 
 repl.onkeydown = (e) => {
   console.log(e);
