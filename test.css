@@ -13,8 +13,16 @@ body {
   width: 500px;
   height: calc(100vh - 2in);
   font-family: monospace;
-  border: 1px solid black;
+  border: 1px solid #999;
   font-size: 14px;
+}
+
+#repl:focus {
+  outline: none;
+}
+
+#repl div {
+  margin: 6px 4px;
 }
 
 .prompt {

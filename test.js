@@ -49,8 +49,15 @@ const backspace = (repl, x) => {
   }
 };
 
+const enter = (repl, x) => {
+  const cursor = repl.querySelector(".cursor");
+  cursor.parentElement.removeChild(cursor);
+  divAndPrompt(repl);
+};
+
 const keybindings = {
   Backspace: backspace,
+  Enter: enter,
 };
 
 const getBinding = (descriptor) => {
