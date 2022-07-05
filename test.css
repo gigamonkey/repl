@@ -21,7 +21,13 @@ body {
   outline: none;
 }
 
-#repl div {
+#repl:focus .cursor {
+  background: green;
+  display: inline-block;
+  width: 2px;
+}
+
+#repl:focus #repl div {
   margin: 6px 4px;
 }
 
@@ -29,10 +35,4 @@ body {
   display: inline-block;
   vertical-align: top;
   width: 1.2em;
-}
-
-.cursor {
-  background: green;
-  display: inline-block;
-  width: 2px;
 }
