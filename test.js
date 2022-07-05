@@ -11,10 +11,9 @@ const repl = document.getElementById("repl");
 
 // TODO:
 
-// - Movement of cursor within the line. Left, Right, Beginning of Line, End of Line.
-// - Shift movement for selection.
 // - History on up and down arrow.
 // - Brace flashing.
+// - Shift movement for selection.
 // - Token colorizing.
 
 const descriptor = (x) => {
@@ -28,6 +27,9 @@ const descriptor = (x) => {
   if (keys.indexOf(x.key) === -1) keys.push(x.key);
   return keys.join("-");
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Commands
 
 const selfInsert = (repl, x) => {
   const cursor = repl.querySelector(".cursor");
@@ -75,11 +77,28 @@ const right = (repl, x) => {
   }
 };
 
+const bol = (repl, x) => {
+  const cursor = repl.querySelector(".cursor");
+  const bol = cursor.parentElement.querySelector(".bol");
+  cursor.parentElement.insertBefore(cursor, bol.nextSibling);
+};
+
+const eol = (repl, x) => {
+  const cursor = repl.querySelector(".cursor");
+  const eol = cursor.parentElement.querySelector(".eol");
+  cursor.parentElement.insertBefore(cursor, eol);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Bindings
+
 const keybindings = {
   Backspace: backspace,
   Enter: enter,
   ArrowLeft: left,
   ArrowRight: right,
+  "Control-a": bol,
+  "Control-e": eol,
 };
 
 const getBinding = (descriptor) => {
@@ -92,37 +111,40 @@ const getBinding = (descriptor) => {
     return selfInsert;
   } else {
     console.log(`No binding for ${descriptor}`);
+    return false;
   }
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Main DOM manipulation
+
+/*
+ * Make the div containing a prompt and the cursor.
+ */
 const divAndPrompt = (repl) => {
   const div = document.createElement("div");
-  const prompt = document.createElement("span");
-  prompt.innerText = "»";
-  prompt.classList.add("prompt");
-
-  const token = document.createElement("span");
-  token.classList.add("token");
-
-  const cursor = document.createElement("span");
-  cursor.classList.add("cursor");
-  cursor.innerHTML = "&nbsp;";
-
-  div.append(prompt);
-  div.append(token);
-  div.append(cursor);
+  div.append(span("prompt", "»"));
+  div.append(span("bol"));
+  //div.append(span("token")); // FIXME: actually use this.
+  div.append(span("cursor", "&nbsp;"));
+  div.append(span("eol"));
   repl.append(div);
 };
 
+const span = (clazz, html) => {
+  const s = document.createElement("span");
+  s.classList.add(clazz);
+  if (html !== undefined) s.innerHTML = html;
+  return s;
+};
+
 repl.onkeydown = (e) => {
-  console.log(e);
   // Extract the bits we care about.
   const { key, ctrlKey, metaKey, altKey } = e;
   const x = { key, ctrlKey, metaKey, altKey };
-
   const b = getBinding(descriptor(x));
 
-  if (b !== undefined) {
+  if (b) {
     b(repl, x);
     e.stopPropagation();
     e.preventDefault();
@@ -134,11 +156,12 @@ repl.onpaste = (e) => {
   for (let c of data) {
     const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
     const b = getBinding(descriptor(x));
-    if (b !== undefined) {
+    if (b) {
       b(repl, x);
     }
   }
 };
 
 divAndPrompt(repl);
+
 repl.focus();
