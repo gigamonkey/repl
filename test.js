@@ -55,9 +55,31 @@ const enter = (repl, x) => {
   divAndPrompt(repl);
 };
 
+const left = (repl, x) => {
+  const cursor = repl.querySelector(".cursor");
+  const e = cursor.previousSibling;
+  if (e.nodeType === 3) {
+    if (e.length === 1) {
+      e.parentElement.insertBefore(cursor, e);
+    }
+  }
+};
+
+const right = (repl, x) => {
+  const cursor = repl.querySelector(".cursor");
+  const e = cursor.nextSibling;
+  if (e.nodeType === 3) {
+    if (e.length === 1) {
+      e.parentElement.insertBefore(cursor, e.nextSibling);
+    }
+  }
+};
+
 const keybindings = {
   Backspace: backspace,
   Enter: enter,
+  ArrowLeft: left,
+  ArrowRight: right,
 };
 
 const getBinding = (descriptor) => {
