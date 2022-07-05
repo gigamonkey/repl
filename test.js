@@ -1,5 +1,3 @@
-const repl = document.getElementById("repl");
-
 // NOTES:
 
 // 1. The Shift and Alt key (at least) are both modifiers but also change the
@@ -28,19 +26,24 @@ const descriptor = (x) => {
   return keys.join("-");
 };
 
+class Repl {
+  constructor(div) {
+    this.div = div;
+    this.cursor = span("cursor", "&nbsp;");
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Commands
 
 const selfInsert = (repl, x) => {
-  const cursor = repl.querySelector(".cursor");
-  cursor.parentElement.insertBefore(document.createTextNode(x.key), cursor);
+  repl.cursor.parentElement.insertBefore(document.createTextNode(x.key), repl.cursor);
 };
 
 const backspace = (repl, x) => {
   //const last = repl.childNodes[repl.childNodes.length - 1];
-  const cursor = repl.querySelector(".cursor");
 
-  const last = cursor.previousSibling;
+  const last = repl.cursor.previousSibling;
   if (last.nodeType === 3) {
     // TEXT_NODE
     if (last.length === 1) {
@@ -52,41 +55,36 @@ const backspace = (repl, x) => {
 };
 
 const enter = (repl, x) => {
-  const cursor = repl.querySelector(".cursor");
-  cursor.parentElement.removeChild(cursor);
+  repl.cursor.parentElement.removeChild(repl.cursor);
   divAndPrompt(repl);
 };
 
 const left = (repl, x) => {
-  const cursor = repl.querySelector(".cursor");
-  const e = cursor.previousSibling;
+  const e = repl.cursor.previousSibling;
   if (e.nodeType === 3) {
     if (e.length === 1) {
-      e.parentElement.insertBefore(cursor, e);
+      e.parentElement.insertBefore(repl.cursor, e);
     }
   }
 };
 
 const right = (repl, x) => {
-  const cursor = repl.querySelector(".cursor");
-  const e = cursor.nextSibling;
+  const e = repl.cursor.nextSibling;
   if (e.nodeType === 3) {
     if (e.length === 1) {
-      e.parentElement.insertBefore(cursor, e.nextSibling);
+      e.parentElement.insertBefore(repl.cursor, e.nextSibling);
     }
   }
 };
 
 const bol = (repl, x) => {
-  const cursor = repl.querySelector(".cursor");
-  const bol = cursor.parentElement.querySelector(".bol");
-  cursor.parentElement.insertBefore(cursor, bol.nextSibling);
+  const bol = repl.cursor.parentElement.querySelector(".bol");
+  repl.cursor.parentElement.insertBefore(repl.cursor, bol.nextSibling);
 };
 
 const eol = (repl, x) => {
-  const cursor = repl.querySelector(".cursor");
-  const eol = cursor.parentElement.querySelector(".eol");
-  cursor.parentElement.insertBefore(cursor, eol);
+  const eol = repl.cursor.parentElement.querySelector(".eol");
+  repl.cursor.parentElement.insertBefore(repl.cursor, eol);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,9 +124,9 @@ const divAndPrompt = (repl) => {
   div.append(span("prompt", "»"));
   div.append(span("bol"));
   //div.append(span("token")); // FIXME: actually use this.
-  div.append(span("cursor", "&nbsp;"));
+  div.append(repl.cursor);
   div.append(span("eol"));
-  repl.append(div);
+  repl.div.append(div);
 };
 
 const span = (clazz, html) => {
@@ -138,7 +136,9 @@ const span = (clazz, html) => {
   return s;
 };
 
-repl.onkeydown = (e) => {
+const repl = new Repl(document.getElementById("repl"));
+
+repl.div.onkeydown = (e) => {
   // Extract the bits we care about.
   const { key, ctrlKey, metaKey, altKey } = e;
   const x = { key, ctrlKey, metaKey, altKey };
@@ -151,7 +151,7 @@ repl.onkeydown = (e) => {
   }
 };
 
-repl.onpaste = (e) => {
+repl.div.onpaste = (e) => {
   const data = e.clipboardData.getData("text/plain");
   for (let c of data) {
     const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
@@ -164,4 +164,4 @@ repl.onpaste = (e) => {
 
 divAndPrompt(repl);
 
-repl.focus();
+repl.div.focus();
