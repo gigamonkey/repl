@@ -88,8 +88,33 @@ const print = (value) => {
   arrow.classList.add("output");
   arrow.append(textNode("⇒ "));
   span.append(arrow);
-  span.append(textNode(JSON.stringify(value)));
+  span.append(textNode(pretty(value)));
   toRepl(span, "value");
+};
+
+const pretty = (v) => {
+  // This could be a lot better but I'd have to write an actual recursive pretty
+  // printer.
+  if (v === null || v === undefined) {
+    return x + "";
+  } else {
+    switch (v.constructor.name) {
+      case "Boolean":
+      case "Function":
+      case "Number":
+      case "String":
+        return v.toString();
+
+      case "Array":
+      case "Object":
+        // ideally we'd use Javascript syntax (i.e. no quotes on properties that
+        // don't need them but this will do for now.
+        return JSON.stringify(v);
+
+      default:
+        return `${v.constructor.name} ${JSON.stringify(v)}`;
+    }
+  }
 };
 
 const replMessage = (text) => toRepl(textNode(text), "message");
@@ -180,8 +205,12 @@ const checkKeyBindings = (e) => {
 };
 
 const isExpression = (code) => {
-  const parsed = acorn.parse(code, { ecmaVersion: 2022 });
-  return parsed.body.length === 1 && parsed.body[0].type == "ExpressionStatement";
+  try {
+    const parsed = acorn.parse(code, { ecmaVersion: 2022 });
+    return parsed.body.length === 1 && parsed.body[0].type == "ExpressionStatement";
+  } catch (e) {
+    return false;
+  }
 };
 
 const replEnter = (e) => {
