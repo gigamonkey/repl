@@ -30,6 +30,43 @@ class Repl {
   constructor(div) {
     this.div = div;
     this.cursor = span("cursor", "&nbsp;");
+
+    this.div.onkeydown = (e) => {
+      // Extract the bits we care about.
+      const { key, ctrlKey, metaKey, altKey } = e;
+      const x = { key, ctrlKey, metaKey, altKey };
+      const b = getBinding(descriptor(x));
+
+      if (b) {
+        b(repl, x);
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    };
+
+    this.div.onpaste = (e) => {
+      const data = e.clipboardData.getData("text/plain");
+      for (let c of data) {
+        const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
+        const b = getBinding(descriptor(x));
+        if (b) {
+          b(repl, x);
+        }
+      }
+    };
+  }
+
+  /*
+   * Make the div containing a prompt and the cursor.
+   */
+  divAndPrompt() {
+    const div = document.createElement("div");
+    div.append(span("prompt", "»"));
+    div.append(span("bol"));
+    //div.append(span("token")); // FIXME: actually use this.
+    div.append(this.cursor);
+    div.append(span("eol"));
+    this.div.append(div);
   }
 }
 
@@ -56,7 +93,7 @@ const backspace = (repl, x) => {
 
 const enter = (repl, x) => {
   repl.cursor.parentElement.removeChild(repl.cursor);
-  divAndPrompt(repl);
+  repl.divAndPrompt();
 };
 
 const left = (repl, x) => {
@@ -116,19 +153,6 @@ const getBinding = (descriptor) => {
 ////////////////////////////////////////////////////////////////////////////////
 // Main DOM manipulation
 
-/*
- * Make the div containing a prompt and the cursor.
- */
-const divAndPrompt = (repl) => {
-  const div = document.createElement("div");
-  div.append(span("prompt", "»"));
-  div.append(span("bol"));
-  //div.append(span("token")); // FIXME: actually use this.
-  div.append(repl.cursor);
-  div.append(span("eol"));
-  repl.div.append(div);
-};
-
 const span = (clazz, html) => {
   const s = document.createElement("span");
   s.classList.add(clazz);
@@ -138,30 +162,6 @@ const span = (clazz, html) => {
 
 const repl = new Repl(document.getElementById("repl"));
 
-repl.div.onkeydown = (e) => {
-  // Extract the bits we care about.
-  const { key, ctrlKey, metaKey, altKey } = e;
-  const x = { key, ctrlKey, metaKey, altKey };
-  const b = getBinding(descriptor(x));
-
-  if (b) {
-    b(repl, x);
-    e.stopPropagation();
-    e.preventDefault();
-  }
-};
-
-repl.div.onpaste = (e) => {
-  const data = e.clipboardData.getData("text/plain");
-  for (let c of data) {
-    const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
-    const b = getBinding(descriptor(x));
-    if (b) {
-      b(repl, x);
-    }
-  }
-};
-
-divAndPrompt(repl);
+repl.divAndPrompt();
 
 repl.div.focus();
