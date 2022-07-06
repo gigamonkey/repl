@@ -14,11 +14,29 @@
 // - Shift movement for selection.
 // - Token colorizing.
 
+const span = (clazz, html) => {
+  const s = document.createElement("span");
+  s.classList.add(clazz);
+  if (html !== undefined) s.innerHTML = html;
+  return s;
+};
+
 class Repl {
-  constructor(div, keybindings) {
+  constructor(div) {
     this.div = div;
-    this.keybindings = keybindings;
     this.cursor = span("cursor", "&nbsp;");
+    this.keybindings = new Keybindings();
+
+    this.keybindings.bind({
+      Backspace: this.backspace,
+      Enter: this.enter,
+      ArrowLeft: this.left,
+      ArrowRight: this.right,
+      "Control-a": this.bol,
+      "Control-e": this.eol,
+    });
+
+    this.keybindings.bindDefault(this.selfInsert);
 
     this.div.onkeydown = (e) => {
       // Extract the bits we care about.
@@ -27,7 +45,7 @@ class Repl {
       const b = this.keybindings.getBinding(x);
 
       if (b) {
-        b(this, x);
+        b.call(this, x);
         e.stopPropagation();
         e.preventDefault();
       }
@@ -39,7 +57,7 @@ class Repl {
         const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
         const b = getBinding(x);
         if (b) {
-          b(this, x);
+          b.call(this, x);
         }
       }
     };
@@ -62,59 +80,59 @@ class Repl {
     div.append(span("eol"));
     this.div.append(div);
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Commands
+
+  selfInsert(x) {
+    this.cursor.parentElement.insertBefore(document.createTextNode(x.key), this.cursor);
+  }
+
+  backspace(x) {
+    const last = this.cursor.previousSibling;
+    if (last.nodeType === 3) {
+      // TEXT_NODE
+      if (last.length === 1) {
+        last.parentElement.removeChild(last);
+      } else {
+        last.deleteData(last.length - 1, 1);
+      }
+    }
+  }
+
+  enter(x) {
+    this.cursor.parentElement.removeChild(this.cursor);
+    this.divAndPrompt();
+  }
+
+  left(x) {
+    const e = this.cursor.previousSibling;
+    if (e.nodeType === 3) {
+      if (e.length === 1) {
+        e.parentElement.insertBefore(this.cursor, e);
+      }
+    }
+  }
+
+  right(x) {
+    const e = this.cursor.nextSibling;
+    if (e.nodeType === 3) {
+      if (e.length === 1) {
+        e.parentElement.insertBefore(this.cursor, e.nextSibling);
+      }
+    }
+  }
+
+  bol(x) {
+    const bol = this.cursor.parentElement.querySelector(".bol");
+    this.cursor.parentElement.insertBefore(this.cursor, bol.nextSibling);
+  }
+
+  eol(x) {
+    const eol = this.cursor.parentElement.querySelector(".eol");
+    this.cursor.parentElement.insertBefore(this.cursor, eol);
+  }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Commands
-
-const selfInsert = (repl, x) => {
-  repl.cursor.parentElement.insertBefore(document.createTextNode(x.key), repl.cursor);
-};
-
-const backspace = (repl, x) => {
-  const last = repl.cursor.previousSibling;
-  if (last.nodeType === 3) {
-    // TEXT_NODE
-    if (last.length === 1) {
-      last.parentElement.removeChild(last);
-    } else {
-      last.deleteData(last.length - 1, 1);
-    }
-  }
-};
-
-const enter = (repl, x) => {
-  repl.cursor.parentElement.removeChild(repl.cursor);
-  repl.divAndPrompt();
-};
-
-const left = (repl, x) => {
-  const e = repl.cursor.previousSibling;
-  if (e.nodeType === 3) {
-    if (e.length === 1) {
-      e.parentElement.insertBefore(repl.cursor, e);
-    }
-  }
-};
-
-const right = (repl, x) => {
-  const e = repl.cursor.nextSibling;
-  if (e.nodeType === 3) {
-    if (e.length === 1) {
-      e.parentElement.insertBefore(repl.cursor, e.nextSibling);
-    }
-  }
-};
-
-const bol = (repl, x) => {
-  const bol = repl.cursor.parentElement.querySelector(".bol");
-  repl.cursor.parentElement.insertBefore(repl.cursor, bol.nextSibling);
-};
-
-const eol = (repl, x) => {
-  const eol = repl.cursor.parentElement.querySelector(".eol");
-  repl.cursor.parentElement.insertBefore(repl.cursor, eol);
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Bindings
@@ -132,8 +150,12 @@ class Keybindings {
     return keys.join("-");
   }
 
-  constructor(bindings) {
+  bind(bindings) {
     this.bindings = bindings;
+  }
+
+  bindDefault(defaultBinding) {
+    this.defaultBinding = defaultBinding;
   }
 
   getBinding(e) {
@@ -143,7 +165,7 @@ class Keybindings {
       return this.bindings[descriptor];
     } else if (descriptor.length === 1) {
       console.log(`Using default binding for ${descriptor}`);
-      return selfInsert;
+      return this.defaultBinding;
     } else {
       console.log(`No binding for ${descriptor}`);
       return false;
@@ -151,23 +173,4 @@ class Keybindings {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Main DOM manipulation
-
-const span = (clazz, html) => {
-  const s = document.createElement("span");
-  s.classList.add(clazz);
-  if (html !== undefined) s.innerHTML = html;
-  return s;
-};
-
-const keybindings = new Keybindings({
-  Backspace: backspace,
-  Enter: enter,
-  ArrowLeft: left,
-  ArrowRight: right,
-  "Control-a": bol,
-  "Control-e": eol,
-});
-
-new Repl(document.getElementById("repl"), keybindings).start();
+new Repl(document.getElementById("repl")).start();
