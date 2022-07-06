@@ -14,18 +14,6 @@
 // - Shift movement for selection.
 // - Token colorizing.
 
-const descriptor = (x) => {
-  let keys = [];
-  // Note: Alt and Meta are likely different on different OSes.
-  // If we actually use bindings for either of those may need to
-  // provide an option to flip their meaning.
-  if (x.ctrlKey) keys.push("Control");
-  if (x.altKey) keys.push("Alt");
-  if (x.metaKey) keys.push("Meta");
-  if (keys.indexOf(x.key) === -1) keys.push(x.key);
-  return keys.join("-");
-};
-
 class Repl {
   constructor(div, keybindings) {
     this.div = div;
@@ -36,10 +24,10 @@ class Repl {
       // Extract the bits we care about.
       const { key, ctrlKey, metaKey, altKey } = e;
       const x = { key, ctrlKey, metaKey, altKey };
-      const b = this.keybindings.getBinding(descriptor(x));
+      const b = this.keybindings.getBinding(x);
 
       if (b) {
-        b(repl, x);
+        b(this, x);
         e.stopPropagation();
         e.preventDefault();
       }
@@ -49,12 +37,17 @@ class Repl {
       const data = e.clipboardData.getData("text/plain");
       for (let c of data) {
         const x = { key: c, ctrlKey: false, metaKey: false, altKey: false };
-        const b = getBinding(descriptor(x));
+        const b = getBinding(x);
         if (b) {
-          b(repl, x);
+          b(this, x);
         }
       }
     };
+  }
+
+  start() {
+    this.divAndPrompt();
+    this.div.focus();
   }
 
   /*
@@ -79,8 +72,6 @@ const selfInsert = (repl, x) => {
 };
 
 const backspace = (repl, x) => {
-  //const last = repl.childNodes[repl.childNodes.length - 1];
-
   const last = repl.cursor.previousSibling;
   if (last.nodeType === 3) {
     // TEXT_NODE
@@ -129,17 +120,29 @@ const eol = (repl, x) => {
 // Bindings
 
 class Keybindings {
+  static descriptor(x) {
+    let keys = [];
+    // Note: Alt and Meta are likely different on different OSes.
+    // If we actually use bindings for either of those may need to
+    // provide an option to flip their meaning.
+    if (x.ctrlKey) keys.push("Control");
+    if (x.altKey) keys.push("Alt");
+    if (x.metaKey) keys.push("Meta");
+    if (keys.indexOf(x.key) === -1) keys.push(x.key);
+    return keys.join("-");
+  }
+
   constructor(bindings) {
     this.bindings = bindings;
   }
 
-  getBinding(descriptor) {
-    console.log(descriptor);
+  getBinding(e) {
+    const descriptor = Keybindings.descriptor(e);
     if (descriptor in this.bindings) {
-      console.log("Found binding");
+      console.log(`${descriptor} is bound`);
       return this.bindings[descriptor];
     } else if (descriptor.length === 1) {
-      console.log("Default binding");
+      console.log(`Using default binding for ${descriptor}`);
       return selfInsert;
     } else {
       console.log(`No binding for ${descriptor}`);
@@ -147,15 +150,6 @@ class Keybindings {
     }
   }
 }
-
-const keybindings = new Keybindings({
-  Backspace: backspace,
-  Enter: enter,
-  ArrowLeft: left,
-  ArrowRight: right,
-  "Control-a": bol,
-  "Control-e": eol,
-});
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main DOM manipulation
@@ -167,8 +161,13 @@ const span = (clazz, html) => {
   return s;
 };
 
-const repl = new Repl(document.getElementById("repl"), keybindings);
+const keybindings = new Keybindings({
+  Backspace: backspace,
+  Enter: enter,
+  ArrowLeft: left,
+  ArrowRight: right,
+  "Control-a": bol,
+  "Control-e": eol,
+});
 
-repl.divAndPrompt();
-
-repl.div.focus();
+new Repl(document.getElementById("repl"), keybindings).start();
